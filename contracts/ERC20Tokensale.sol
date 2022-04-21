@@ -5,6 +5,8 @@ contract ERC20Tokensale{
     address admin;
     Erc20Token public tokenContract;
     uint256 TokenPrice;
+    uint256 soldToken;
+    event sell (address _buyer, uint256 _amount);
   constructor( Erc20Token _tokenContract, uint256 _tokenPrice) public {
         //assign admin
         admin = msg.sender;
@@ -16,5 +18,12 @@ contract ERC20Tokensale{
 
     }
     //buy tokens
-    
+    function BuyTokens(uint256 _tokenNumber)  public payable{
+        //keep track of  number of token sale
+        //emit the sale event
+        soldToken += _tokenNumber ;
+        emit sell(msg.sender, _tokenNumber);
+
+
+    }
 }
