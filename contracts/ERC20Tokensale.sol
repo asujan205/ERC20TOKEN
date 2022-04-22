@@ -16,14 +16,28 @@ contract ERC20Tokensale{
       TokenPrice = _tokenPrice;
 
 
+    }   event Sell(address _buyer, uint256 _amount);
+
+     function multiply(uint x, uint y) internal pure returns (uint z) {
+        require(y == 0 || (z = x * y) / y == x);
     }
-    //buy tokens
-    function BuyTokens(uint256 _tokenNumber)  public payable{
-        //keep track of  number of token sale
-        //emit the sale event
-        soldToken += _tokenNumber ;
-        emit sell(msg.sender, _tokenNumber);
 
+    function buyTokens(uint256 _numberOfTokens) public payable {
+        require(msg.value == multiply(_numberOfTokens, TokenPrice));
+        require(tokenContract.balanceOf(this) >= _numberOfTokens);
+        require(tokenContract.transfer(msg.sender, _numberOfTokens));
 
+        soldToken += _numberOfTokens;
+
+        Sell(msg.sender, _numberOfTokens);
+    }
+
+    function endSale() public {
+        require(msg.sender == admin);
+        require(tokenContract.transfer(admin, tokenContract.balanceOf(this)));
+
+        // UPDATE: Let's not destroy the contract here
+        // Just transfer the balance to the admin
+        admin.transfer(address(this).balance);
     }
 }
